@@ -1,8 +1,8 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import userEvent from '@testing-library/user-event'
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+import React from 'react';
+import App from './App';
 
 beforeEach(() => {
   enableFetchMocks();
@@ -14,9 +14,9 @@ it('renders appbar with title and shows no error snackbar', async () => {
   render(<App />);
 
   const appBarTitle = await screen.findByText(/Carbon Footprint/i);
-  expect(appBarTitle).toBeInTheDocument();
-
   const errorSnackbar = screen.queryByText(/Could not connect to carbon interface!/i);
+
+  expect(appBarTitle).toBeInTheDocument();
   expect(errorSnackbar).toBeNull();
 });
 
@@ -26,5 +26,6 @@ it('shows error snackbar when carbon interface api is not working', async () => 
   render(<App />);
 
   const errorSnackbar = await screen.findByText(/Could not connect to carbon interface!/i);
+
   expect(errorSnackbar).toBeInTheDocument();
 });
