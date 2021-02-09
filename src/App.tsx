@@ -9,6 +9,7 @@ import SnackbarView from './components/SnackbarView';
 import ElectricityForm from './components/ElectricityForm';
 import CarbonUsageDisplay from './components/CarbonUsageDisplay';
 import { CarbonElectricityResult } from './types/domainTypes';
+import { pingCarbonInterface } from './services/carbonInterfaceService';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,7 +36,14 @@ const App: React.FC = () => {
   const thememode: PaletteType = darkState ? 'dark' : 'light';
 
   useEffect(() => {
-    pingCarbonInterface();
+    pingCarbonInterface()
+      .then(response => response.json())
+      .then((data) => {
+        setPingResponse(data.message);
+      }).catch((reason) => {
+        console.log(reason);
+        setShowErrorSnackbar(true);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -60,23 +68,6 @@ const App: React.FC = () => {
 
   const handleThemeChange = () => {
     setDarkState(!darkState);
-  };
-
-  const pingCarbonInterface = () => {
-    const apiKey = process.env.REACT_APP_CARBONINTERFACE_API_KEY;
-
-    fetch('https://www.carboninterface.com/api/v1/auth', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + apiKey,
-      },
-    }).then(response => response.json())
-      .then((data) => {
-        setPingResponse(data.message);
-      }).catch((reason) => {
-        console.log(reason);
-        setShowErrorSnackbar(true);
-      });
   };
 
   return (

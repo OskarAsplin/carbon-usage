@@ -12,6 +12,8 @@ import SnackbarView from './SnackbarView';
 import { CarbonElectricityResult } from '../types/domainTypes';
 import { CarbonResultResponse } from '../types/responseTypes';
 import { mapToCarbonElectricityResult } from '../utils/mapper';
+import csc from 'country-state-city'
+import { postCarbonElectricityEstimate } from '../services/carbonInterfaceService';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       left: '50%',
       marginTop: '-20px',
       marginLeft: '-20px',
+      zIndex: 10
     }
   }),
 );
@@ -66,13 +69,19 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
   const { setResults } = props;
 
   const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
   const [weeklyUsage, setWeeklyUsage] = useState<(number | undefined)[]>(Array(7).fill(undefined));
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleCountryChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setState('');
     setCountry(event.target.value as string);
+  };
+
+  const handleStateChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setState(event.target.value as string);
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -95,19 +104,7 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
       setLoading(true);
       const carbonResultPromises = weeklyUsage.map((usage) => {
         return (
-          fetch('https://www.carboninterface.com/api/v1/estimates', {
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + apiKey,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "type": "electricity",
-              "electricity_unit": "mwh",
-              "electricity_value": usage,
-              "country": country,
-            })
-          }).then(response => response.json()));
+          postCarbonElectricityEstimate(usage!, country, state).then(response => response.json()));
       });
       Promise.all(carbonResultPromises)
         .then((carbonResults) => {
@@ -127,6 +124,26 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
     }
   }
 
+  const getStateSelector = () => {
+    return (<FormControl variant="outlined" className={classes.formControl}>
+      <InputLabel id="state-label">State (optional)</InputLabel>
+      <Select
+        labelId="state-label"
+        id="state-select"
+        value={state}
+        onChange={handleStateChange}
+        data-testid={'state-select'}
+        label="State (optional)"
+        disabled={!country}
+      >
+        <MenuItem value={''}>None</MenuItem>
+        {csc.getStatesOfCountry(country === 'ca' ? 'CA' : 'US').map((state) => {
+          return (<MenuItem key={state.isoCode} value={state.isoCode.toLowerCase()}>{state.name}</MenuItem>);
+        })}
+      </Select>
+    </FormControl>);
+  }
+
   return (
     <div className={classes.root}>
       <Typography variant='h6' className={classes.infoText}>
@@ -136,10 +153,10 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
         <form className={classes.form} autoComplete="off">
           <div className={classes.formRow}>
             <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">Country</InputLabel>
+              <InputLabel id="country-label">Country</InputLabel>
               <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
+                labelId="country-label"
+                id="country-select"
                 value={country}
                 onChange={handleCountryChange}
                 data-testid={'country-select'}
@@ -149,6 +166,7 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
                 <MenuItem value={'ca'}>Canada</MenuItem>
               </Select>
             </FormControl>
+            {getStateSelector()}
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 disableToolbar

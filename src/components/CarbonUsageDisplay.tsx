@@ -67,6 +67,8 @@ const CarbonUsageDisplay: React.FC<Props> = (props: Props) => {
     setUnit(event.target.value as string);
   };
 
+  const fixedDecimals = (num: number) => + parseFloat('' + num).toFixed(4);
+
   const data = results.map((result: CarbonElectricityResult) => {
     switch (unit) {
       case 'g':
@@ -128,7 +130,7 @@ const CarbonUsageDisplay: React.FC<Props> = (props: Props) => {
       </Paper>
       <Paper className={classes.paper2}>
         <Typography variant="h5" className={classes.totalAmount}>
-        {'Total: ' + totalAmount() + ' ' + unit}
+          {'Total: ' + fixedDecimals(totalAmount()!) + ' ' + unit}
         </Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>
