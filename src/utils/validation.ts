@@ -17,18 +17,19 @@ export const isValidStartDateAndCountry = (date: Date|null, country: string) => 
   return isValidStartDate(date) && country.length > 0;
 }
 
-export const isValidWeeklyUsages = (weeklyUsage: (number | undefined)[]) => {
-  const re = /^[0-9]+(\.[0-9]+)?$/
-  if (!weeklyUsage.includes(undefined)) {
-    for (let i = 0; i < weeklyUsage.length; i++) {
-      const validated = re.test('' + weeklyUsage[i]);
-      if (!validated) {
-        return false;
-      }
-    }
-    return true;
-  } else {
+export const isValidUsage = (usage: (number | undefined)) => {
+  if (typeof usage === 'undefined') {
     return false;
   }
-  return !weeklyUsage.includes(undefined)
+  const re = /^[0-9]+(\.[0-9]+)?$/
+  return re.test('' + usage);
+}
+
+export const isValidWeeklyUsages = (weeklyUsage: (number | undefined)[]) => {
+  for (let i = 0; i < weeklyUsage.length; i++) {
+    if (!isValidUsage(weeklyUsage[i])) {
+      return false;
+    }
+  }
+  return true;
 }

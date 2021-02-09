@@ -7,7 +7,8 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import 'date-fns';
-import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidWeeklyUsages } from '../utils/validation';
+import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
+import SnackbarView from './SnackbarView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,17 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
-interface OwnProps {}
-
-type Props = OwnProps;
-
-const ElectricityForm: React.FC<Props> = (props: Props) => {
+const ElectricityForm = () => {
   const classes = useStyles();
 
   const [country, setCountry] = useState('');
   const [weeklyUsage, setWeeklyUsage] = useState<(number | undefined)[]>(Array(7).fill(undefined));
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
 
   const handleCountryChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCountry(event.target.value as string);
@@ -72,6 +69,14 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
       setWeeklyUsage([...weeklyUsage.slice(0, day), undefined, ...weeklyUsage.slice(day+1)]);
     }
   };
+
+  const handleSubmitButton = () => {
+    if (isValidWeeklyUsages(weeklyUsage)) {
+      // submit form
+    } else {
+      setShowErrorSnackbar(true);
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -141,6 +146,7 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
                       data-testid="outlined-number"
                       label={startDate.toLocaleDateString('en-UK', options)}
                       type="number"
+                      error={showErrorSnackbar && !isValidUsage(dayUsage)}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -152,10 +158,15 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
             </form>
           </Paper>
         </Fade>}
-      {isValidStartDateAndCountry(selectedDate, country) && isValidWeeklyUsages(weeklyUsage) &&
-        <Button variant="contained">
+      {isValidStartDateAndCountry(selectedDate, country) &&
+        <Button color="primary" variant="contained" onClick={handleSubmitButton}>
         Show carbon footprint
         </Button>}
+      <SnackbarView
+        showSnackbar={showErrorSnackbar}
+        setShowSnackbar={setShowErrorSnackbar}
+        severity={'error'}
+        message={'Usage values are not valid. Please check your submit values'} />
     </div>
   );
 };
