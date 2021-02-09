@@ -18,5 +18,17 @@ export const isValidStartDateAndCountry = (date: Date|null, country: string) => 
 }
 
 export const isValidWeeklyUsages = (weeklyUsage: (number | undefined)[]) => {
+  const re = /^[0-9]+(\.[0-9]+)?$/
+  if (!weeklyUsage.includes(undefined)) {
+    for (let i = 0; i < weeklyUsage.length; i++) {
+      const validated = re.test('' + weeklyUsage[i]);
+      if (!validated) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
   return !weeklyUsage.includes(undefined)
 }

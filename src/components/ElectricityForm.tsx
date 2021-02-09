@@ -130,8 +130,8 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
               <div className={classes.formRow}>
                 {weeklyUsage.map((dayUsage, i) => {
                   if (selectedDate) {
-                    const dayDate: Date = new Date();
-                    dayDate.setDate(selectedDate.getDate() + i);
+                    const startDate: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+                    startDate.setDate(selectedDate.getDate() + i);
                     const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
                     return (<TextField
                       key={'dayUsageInput:' + i}
@@ -139,7 +139,7 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleValueChange(event, i)}
                       id="outlined-number"
                       data-testid="outlined-number"
-                      label={dayDate.toLocaleDateString('en-UK', options)}
+                      label={startDate.toLocaleDateString('en-UK', options)}
                       type="number"
                       InputLabelProps={{
                         shrink: true,

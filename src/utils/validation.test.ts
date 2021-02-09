@@ -33,3 +33,19 @@ it('validates date and country', () => {
     expect(isValidStartDateAndCountry(invalidDate, 'us')).toBeFalsy();
     expect(isValidStartDateAndCountry(validDate, 'us')).toBeTruthy();
 });
+
+it('validates weekly usages', () => {
+    const undefinedWeeklyUsages = Array(7).fill(undefined);
+    const invalidWeeklyUsages_0 = Array(7).fill('13.1.1');
+    const invalidWeeklyUsages_1 = Array(7).fill('.11');
+    const invalidWeeklyUsages_2 = Array(7).fill('13.37e');
+    const validWeeklyUsages_0 = Array(7).fill('13.11');
+    const validWeeklyUsages_1 = Array(7).fill('123456789.123456789');
+
+    expect(isValidWeeklyUsages(undefinedWeeklyUsages)).toBeFalsy();
+    expect(isValidWeeklyUsages(invalidWeeklyUsages_0)).toBeFalsy();
+    expect(isValidWeeklyUsages(invalidWeeklyUsages_1)).toBeFalsy();
+    expect(isValidWeeklyUsages(invalidWeeklyUsages_2)).toBeFalsy();
+    expect(isValidWeeklyUsages(validWeeklyUsages_0)).toBeTruthy();
+    expect(isValidWeeklyUsages(validWeeklyUsages_1)).toBeTruthy();
+});
