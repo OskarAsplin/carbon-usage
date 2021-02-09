@@ -111,11 +111,11 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
       });
       Promise.all(carbonResultPromises)
         .then((carbonResults) => {
-            const mappedResults = carbonResults.map((result, i) => {
-                const startDate: Date = new Date(selectedDate!.getFullYear(), selectedDate!.getMonth(), selectedDate!.getDate());
-                startDate.setDate(selectedDate!.getDate() + i);
-                return mapToCarbonElectricityResult(result, startDate);
-            })
+          const mappedResults = carbonResults.map((result, i) => {
+              const startDate: Date = new Date(selectedDate!.getFullYear(), selectedDate!.getMonth(), selectedDate!.getDate());
+              startDate.setDate(selectedDate!.getDate() + i);
+              return mapToCarbonElectricityResult(result, startDate);
+          })
           setResults(mappedResults);
         })
         .catch((error) => {
@@ -215,7 +215,7 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
         showSnackbar={showErrorSnackbar}
         setShowSnackbar={setShowErrorSnackbar}
         severity={'error'}
-        message={'Usage values are not valid. Please check your submit values'} />
+        message={'Usage values are not valid. Values must be positive decimal numbers. Ex: 1.23'} />
       {loading && <CircularProgress className={classes.loadingSpinner}/>}
     </div>
   );
