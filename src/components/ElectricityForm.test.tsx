@@ -9,7 +9,7 @@ beforeEach(() => {
 })
 
 it('should display input field for location and date', () => {
-  render(<ElectricityForm />);
+    render(<ElectricityForm setResults={jest.fn()} />);
 
   const countryInput = screen.getByLabelText('Country');
   const dateInput = screen.getByLabelText('Start date');
@@ -19,7 +19,7 @@ it('should display input field for location and date', () => {
 });
 
 it('should not display usage value fields when date and country are undefined', () => {
-  render(<ElectricityForm />);
+  render(<ElectricityForm setResults={jest.fn()} />);
 
   const usageInfoText = screen.queryByText('Enter the electricity usage (mwh) for each day');
 

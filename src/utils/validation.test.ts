@@ -15,10 +15,6 @@ it('validates start date to be inside limits', () => {
     const moreThanMax: Date = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
     moreThanMax.setDate(maxDate.getDate() + 1);
 
-    console.log(moreThanMax);
-    console.log(maxDate);
-    console.log(moreThanMax < maxDate);
-
     expect(isValidStartDate(lessThanMin)).toBeFalsy();
     expect(isValidStartDate(moreThanMax)).toBeFalsy();
     expect(isValidStartDate(minDate)).toBeTruthy();
@@ -39,6 +35,7 @@ it('validates weekly usages', () => {
     const invalidWeeklyUsages_0 = Array(7).fill('13.1.1');
     const invalidWeeklyUsages_1 = Array(7).fill('.11');
     const invalidWeeklyUsages_2 = Array(7).fill('13.37e');
+    const invalidWeeklyUsages_3 = Array(7).fill('0');
     const validWeeklyUsages_0 = Array(7).fill('13.11');
     const validWeeklyUsages_1 = Array(7).fill('123456789.123456789');
 
@@ -46,6 +43,7 @@ it('validates weekly usages', () => {
     expect(isValidWeeklyUsages(invalidWeeklyUsages_0)).toBeFalsy();
     expect(isValidWeeklyUsages(invalidWeeklyUsages_1)).toBeFalsy();
     expect(isValidWeeklyUsages(invalidWeeklyUsages_2)).toBeFalsy();
+    expect(isValidWeeklyUsages(invalidWeeklyUsages_3)).toBeFalsy();
     expect(isValidWeeklyUsages(validWeeklyUsages_0)).toBeTruthy();
     expect(isValidWeeklyUsages(validWeeklyUsages_1)).toBeTruthy();
 });

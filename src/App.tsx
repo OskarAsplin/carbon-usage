@@ -7,6 +7,8 @@ import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import AppBarView from './components/AppBarView';
 import SnackbarView from './components/SnackbarView';
 import ElectricityForm from './components/ElectricityForm';
+import CarbonUsageDisplay from './components/CarbonUsageDisplay';
+import { CarbonElectricityResult } from './types/domainTypes';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,7 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       padding: theme.spacing(0, 4),
     },
-    appBarSpace: theme.mixins.toolbar,
+    appBarSpace: {
+      marginBottom: theme.spacing(6)
+    },
   }),
 );
 
@@ -27,6 +31,7 @@ const App: React.FC = () => {
   const [darkState, setDarkState] = useState(false);
   const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
   const [pingResponse, setPingResponse] = useState('');
+  const [carbonUsageResults, setCarbonUsageResults] = useState<(CarbonElectricityResult)[]>([]);
   const thememode: PaletteType = darkState ? 'dark' : 'light';
 
   useEffect(() => {
@@ -80,7 +85,8 @@ const App: React.FC = () => {
       <AppBarView thememode={thememode} changeTheme={handleThemeChange} />
       <div className={classes.appBarSpace} />
       <main className={classes.root}>
-        <ElectricityForm />
+        <ElectricityForm setResults={setCarbonUsageResults} />
+        {carbonUsageResults.length > 0 && < CarbonUsageDisplay results={carbonUsageResults} />}
         <SnackbarView
         showSnackbar={showErrorSnackbar}
         setShowSnackbar={setShowErrorSnackbar}

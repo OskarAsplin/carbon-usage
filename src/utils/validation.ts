@@ -22,7 +22,7 @@ export const isValidUsage = (usage: (number | undefined)) => {
     return false;
   }
   const re = /^[0-9]+(\.[0-9]+)?$/
-  return re.test('' + usage);
+  return re.test('' + usage) && usage > 0;
 }
 
 export const isValidWeeklyUsages = (weeklyUsage: (number | undefined)[]) => {

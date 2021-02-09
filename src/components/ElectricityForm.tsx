@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade } from '@material-ui/core';
+import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade, CircularProgress } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -9,6 +9,9 @@ import {
 import 'date-fns';
 import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
 import SnackbarView from './SnackbarView';
+import { CarbonElectricityResult } from '../types/domainTypes';
+import { CarbonResultResponse } from '../types/responseTypes';
+import { mapToCarbonElectricityResult } from '../utils/mapper';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,22 +38,38 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2),
     },
     paper: {
-      marginBottom: theme.spacing(6),
+      marginBottom: theme.spacing(4),
     },
     formControl: {
       margin: theme.spacing(1),
       minWidth: 150,
     },
+    loadingSpinner: {
+      position: 'fixed',
+      top: '60%',
+      left: '50%',
+      marginTop: '-20px',
+      marginLeft: '-20px',
+    }
   }),
 );
 
-const ElectricityForm = () => {
+interface OwnProps {
+    setResults: React.Dispatch<React.SetStateAction<CarbonElectricityResult[]>>,
+}
+
+type Props = OwnProps;
+
+const ElectricityForm: React.FC<Props> = (props: Props) => {
   const classes = useStyles();
+
+  const { setResults } = props;
 
   const [country, setCountry] = useState('');
   const [weeklyUsage, setWeeklyUsage] = useState<(number | undefined)[]>(Array(7).fill(undefined));
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCountryChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCountry(event.target.value as string);
@@ -71,8 +90,38 @@ const ElectricityForm = () => {
   };
 
   const handleSubmitButton = () => {
+    const apiKey = process.env.REACT_APP_CARBONINTERFACE_API_KEY;
     if (isValidWeeklyUsages(weeklyUsage)) {
-      // submit form
+      setLoading(true);
+      const carbonResultPromises = weeklyUsage.map((usage) => {
+        return (
+          fetch('https://www.carboninterface.com/api/v1/estimates', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + apiKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "type": "electricity",
+              "electricity_unit": "mwh",
+              "electricity_value": usage,
+              "country": country,
+            })
+          }).then(response => response.json()));
+      });
+      Promise.all(carbonResultPromises)
+        .then((carbonResults) => {
+            const mappedResults = carbonResults.map((result, i) => {
+                const startDate: Date = new Date(selectedDate!.getFullYear(), selectedDate!.getMonth(), selectedDate!.getDate());
+                startDate.setDate(selectedDate!.getDate() + i);
+                return mapToCarbonElectricityResult(result, startDate);
+            })
+          setResults(mappedResults);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
     } else {
       setShowErrorSnackbar(true);
     }
@@ -159,7 +208,7 @@ const ElectricityForm = () => {
           </Paper>
         </Fade>}
       {isValidStartDateAndCountry(selectedDate, country) &&
-        <Button color="primary" variant="contained" onClick={handleSubmitButton}>
+        <Button color="primary" variant="contained" onClick={handleSubmitButton} disabled={loading}>
         Show carbon footprint
         </Button>}
       <SnackbarView
@@ -167,6 +216,7 @@ const ElectricityForm = () => {
         setShowSnackbar={setShowErrorSnackbar}
         severity={'error'}
         message={'Usage values are not valid. Please check your submit values'} />
+      {loading && <CircularProgress className={classes.loadingSpinner}/>}
     </div>
   );
 };
