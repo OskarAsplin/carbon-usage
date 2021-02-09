@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import React from 'react';
@@ -8,17 +8,17 @@ beforeEach(() => {
   enableFetchMocks();
 })
 
-it('should display input field for location and date', async () => {
+it('should display input field for location and date', () => {
   render(<ElectricityForm />);
 
-  const countryInput = await screen.getByLabelText('Country');
-  const dateInput = await screen.getByLabelText('Start date');
+  const countryInput = screen.getByLabelText('Country');
+  const dateInput = screen.getByLabelText('Start date');
 
   expect(countryInput).toBeInTheDocument();
   expect(dateInput).toBeInTheDocument();
 });
 
-it('should not display usage value fields when date and country are undefined', async () => {
+it('should not display usage value fields when date and country are undefined', () => {
   render(<ElectricityForm />);
 
   const usageInfoText = screen.queryByText('Enter the electricity usage (mwh) for each day');

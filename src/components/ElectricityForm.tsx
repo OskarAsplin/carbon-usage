@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import 'date-fns';
+import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidWeeklyUsages } from '../utils/validation';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,8 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 type Props = OwnProps;
 
@@ -65,18 +65,6 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const isValidStartDate = () => {
-    return selectedDate && isValidDate(selectedDate) && selectedDate > minDate && selectedDate < maxDate;
-  }
-
-  const isValidDate = (d: any) => {
-    return d instanceof Date && !isNaN(d.getTime());
-  }
-
-  const isValidStartDateAndCountry = () => {
-    return isValidStartDate() && country;
-  }
-
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>, day: number) => {
     if (event.target.value.length > 0) {
       setWeeklyUsage([...weeklyUsage.slice(0, day), +event.target.value, ...weeklyUsage.slice(day+1)]);
@@ -84,9 +72,6 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
       setWeeklyUsage([...weeklyUsage.slice(0, day), undefined, ...weeklyUsage.slice(day+1)]);
     }
   };
-
-  const minDate = new Date(new Date().getFullYear() - 20, 0, 1);
-  const maxDate = new Date(new Date().getFullYear() + 1, 11, 31);
 
   return (
     <div className={classes.root}>
@@ -132,38 +117,42 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
           </div>
         </form>
       </Paper>
-      {isValidStartDateAndCountry() &&
-      <Typography variant='h6' className={classes.infoText}>
-        Enter the electricity usage (mwh) for each day
-      </Typography>}
-      {isValidStartDateAndCountry() &&
-        <Paper variant="outlined" className={classes.paper}>
-          <form className={classes.form} autoComplete="off">
-            <div className={classes.formRow}>
-              {weeklyUsage.map((dayUsage, i) => {
-                if (selectedDate) {
-                  const dayDate: Date = new Date();
-                  dayDate.setDate(selectedDate.getDate() + i);
-                  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-                  return (<TextField
-                    key={'dayUsageInput:' + i}
-                    value={!dayUsage && dayUsage !== 0 ? '' : dayUsage}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleValueChange(event, i)}
-                    id="outlined-number"
-                    data-testid="outlined-number"
-                    label={dayDate.toLocaleDateString('en-UK', options)}
-                    type="number"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                  />);
-                }
-              })}
-            </div>
-          </form>
-        </Paper>}
-      {isValidStartDateAndCountry() && !weeklyUsage.includes(undefined) &&
+      {isValidStartDateAndCountry(selectedDate, country) &&
+        <Fade in={isValidStartDateAndCountry(selectedDate, country)}>
+          <Typography variant='h6' className={classes.infoText}>
+          Enter the electricity usage (mwh) for each day
+          </Typography>
+        </Fade>}
+      {isValidStartDateAndCountry(selectedDate, country) &&
+        <Fade in={isValidStartDateAndCountry(selectedDate, country)}>
+          <Paper variant="outlined" className={classes.paper}>
+            <form className={classes.form} autoComplete="off">
+              <div className={classes.formRow}>
+                {weeklyUsage.map((dayUsage, i) => {
+                  if (selectedDate) {
+                    const dayDate: Date = new Date();
+                    dayDate.setDate(selectedDate.getDate() + i);
+                    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+                    return (<TextField
+                      key={'dayUsageInput:' + i}
+                      value={!dayUsage && dayUsage !== 0 ? '' : dayUsage}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleValueChange(event, i)}
+                      id="outlined-number"
+                      data-testid="outlined-number"
+                      label={dayDate.toLocaleDateString('en-UK', options)}
+                      type="number"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                    />);
+                  }
+                })}
+              </div>
+            </form>
+          </Paper>
+        </Fade>}
+      {isValidStartDateAndCountry(selectedDate, country) && isValidWeeklyUsages(weeklyUsage) &&
         <Button variant="contained">
         Show carbon footprint
         </Button>}
