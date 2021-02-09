@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { createStyles, CssBaseline, MuiThemeProvider, Theme, PaletteType, Button, Typography } from "@material-ui/core";
+import { createStyles, CssBaseline, MuiThemeProvider, Theme, PaletteType } from "@material-ui/core";
 import { indigo, lightBlue } from "@material-ui/core/colors";
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import AppBarView from './components/AppBarView';
 import SnackbarView from './components/SnackbarView';
+import ElectricityForm from './components/ElectricityForm';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,7 +15,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%'
+      width: '100%',
+      padding: theme.spacing(0, 4),
     },
     appBarSpace: theme.mixins.toolbar,
   }),
@@ -78,12 +80,7 @@ const App: React.FC = () => {
       <AppBarView thememode={thememode} changeTheme={handleThemeChange} />
       <div className={classes.appBarSpace} />
       <main className={classes.root}>
-        <Button variant="contained" onClick={() => pingCarbonInterface()}>
-        Ping CarbonInterface
-        </Button>
-        <Typography>
-        {pingResponse}
-        </Typography>
+        <ElectricityForm />
         <SnackbarView
         showSnackbar={showErrorSnackbar}
         setShowSnackbar={setShowErrorSnackbar}
