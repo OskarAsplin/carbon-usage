@@ -1,8 +1,8 @@
-import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, IconButton, PaletteType } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Brightness2 from "@material-ui/icons/Brightness2";
 import Brightness4 from "@material-ui/icons/Brightness4";
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

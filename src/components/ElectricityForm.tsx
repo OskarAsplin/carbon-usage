@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade, CircularProgress } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
+import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade, CircularProgress } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import csc from 'country-state-city'
 import 'date-fns';
-import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
-import SnackbarView from './SnackbarView';
+import React, { useState } from 'react';
+import { postCarbonElectricityEstimate } from '../services/carbonInterfaceService';
 import { CarbonElectricityResult } from '../types/domainTypes';
 import { CarbonResultResponse } from '../types/responseTypes';
 import { mapToCarbonElectricityResult } from '../utils/mapper';
-import csc from 'country-state-city'
-import { postCarbonElectricityEstimate } from '../services/carbonInterfaceService';
+import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
+import SnackbarView from './SnackbarView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

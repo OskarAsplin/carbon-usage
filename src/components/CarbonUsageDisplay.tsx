@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
-import SnackbarView from './SnackbarView';
 import { Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import { CarbonElectricityResult } from '../types/domainTypes';
+import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
+import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import { CarbonElectricityResult } from '../types/domainTypes';
+import SnackbarView from './SnackbarView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

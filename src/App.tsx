@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import { createStyles, CssBaseline, MuiThemeProvider, Theme, PaletteType } from "@material-ui/core";
 import { indigo, lightBlue } from "@material-ui/core/colors";
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from 'react';
+import './App.css';
 import AppBarView from './components/AppBarView';
-import SnackbarView from './components/SnackbarView';
-import ElectricityForm from './components/ElectricityForm';
 import CarbonUsageDisplay from './components/CarbonUsageDisplay';
-import { CarbonElectricityResult } from './types/domainTypes';
+import ElectricityForm from './components/ElectricityForm';
+import SnackbarView from './components/SnackbarView';
+import logo from './logo.svg';
 import { pingCarbonInterface } from './services/carbonInterfaceService';
+import { CarbonElectricityResult } from './types/domainTypes';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
