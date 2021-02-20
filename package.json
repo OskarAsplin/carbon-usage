@@ -54,6 +54,10 @@
     "@types/testing-library__jest-dom": "^5.9.5",
     "@types/testing-library__react": "^10.2.0",
     "@types/testing-library__user-event": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "eslint": "^7.20.0",
+    "eslint-plugin-react": "^7.22.0",
     "jest-fetch-mock": "^3.0.3",
     "ts-jest": "^26.5.0"
   }
