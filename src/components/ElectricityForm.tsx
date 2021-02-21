@@ -1,5 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { TextField, Button, Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select, Fade, CircularProgress } from '@material-ui/core';
+import { TextField, Button, Paper, Typography, FormControl, InputLabel, MenuItem, Select, Fade, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import csc from 'country-state-city'
@@ -7,9 +7,8 @@ import 'date-fns';
 import React, { useState } from 'react';
 import { postCarbonElectricityEstimate } from '../services/carbonInterfaceService';
 import { CarbonElectricityResult } from '../types/domainTypes';
-import { CarbonResultResponse } from '../types/responseTypes';
 import { mapToCarbonElectricityResult } from '../utils/mapper';
-import { minDate, maxDate, isValidStartDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
+import { minDate, maxDate, isValidStartDateAndCountry, isValidUsage, isValidWeeklyUsages } from '../utils/validation';
 import SnackbarView from './SnackbarView';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -96,18 +95,17 @@ const ElectricityForm: React.FC<Props> = (props: Props) => {
   };
 
   const handleSubmitButton = () => {
-    const apiKey = process.env.REACT_APP_CARBONINTERFACE_API_KEY;
-    if (isValidWeeklyUsages(weeklyUsage)) {
+    if (isValidWeeklyUsages(weeklyUsage) && selectedDate) {
       setLoading(true);
-      const carbonResultPromises = weeklyUsage.map((usage) => {
+      const carbonResultPromises = (weeklyUsage as number[]).map((usage) => {
         return (
-          postCarbonElectricityEstimate(usage!, country, state).then(response => response.json()));
+          postCarbonElectricityEstimate(usage, country, state).then(response => response.json()));
       });
       Promise.all(carbonResultPromises)
         .then((carbonResults) => {
           const mappedResults = carbonResults.map((result, i) => {
-              const startDate: Date = new Date(selectedDate!.getFullYear(), selectedDate!.getMonth(), selectedDate!.getDate());
-              startDate.setDate(selectedDate!.getDate() + i);
+              const startDate: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+              startDate.setDate(selectedDate.getDate() + i);
               return mapToCarbonElectricityResult(result, startDate);
           })
           setResults(mappedResults);

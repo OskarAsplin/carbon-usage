@@ -1,6 +1,5 @@
-import { render, screen, fireEvent, within, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
-import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+import { render, screen } from '@testing-library/react';
+import { enableFetchMocks } from 'jest-fetch-mock';
 import React from 'react';
 import ElectricityForm from './ElectricityForm';
 

@@ -1,7 +1,7 @@
 
 const apiKey = process.env.REACT_APP_CARBONINTERFACE_API_KEY;
 
-export const pingCarbonInterface = () => {
+export const pingCarbonInterface = (): Promise<Response> => {
     return fetch('https://www.carboninterface.com/api/v1/auth', {
         method: 'GET',
         headers: {
@@ -10,7 +10,7 @@ export const pingCarbonInterface = () => {
     });
 }
 
-export const postCarbonElectricityEstimate = (usage: number, country: string, state?: string) => {
+export const postCarbonElectricityEstimate = (usage: number, country: string, state?: string): Promise<Response> => {
     return fetch('https://www.carboninterface.com/api/v1/estimates', {
         method: 'POST',
         headers: {

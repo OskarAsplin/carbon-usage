@@ -1,9 +1,8 @@
-import { Paper, Grid, Typography, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { Paper, Typography, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Label, Tooltip, CartesianGrid } from 'recharts';
 import { CarbonElectricityResult } from '../types/domainTypes';
-import SnackbarView from './SnackbarView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -101,6 +100,7 @@ const CarbonUsageDisplay: React.FC<Props> = (props: Props) => {
         return results.map((result) => result.carbon_mt).reduce((a, b) => a + b, 0);
         break;
     }
+    return 0;
   }
 
   return (
@@ -130,7 +130,7 @@ const CarbonUsageDisplay: React.FC<Props> = (props: Props) => {
       </Paper>
       <Paper className={classes.paper2}>
         <Typography variant="h5" className={classes.totalAmount}>
-          {'Total: ' + fixedDecimals(totalAmount()!) + ' ' + unit}
+          {'Total: ' + fixedDecimals(totalAmount()) + ' ' + unit}
         </Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>

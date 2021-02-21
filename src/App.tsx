@@ -7,7 +7,6 @@ import AppBarView from './components/AppBarView';
 import CarbonUsageDisplay from './components/CarbonUsageDisplay';
 import ElectricityForm from './components/ElectricityForm';
 import SnackbarView from './components/SnackbarView';
-import logo from './logo.svg';
 import { pingCarbonInterface } from './services/carbonInterfaceService';
 import { CarbonElectricityResult } from './types/domainTypes';
 
@@ -31,16 +30,13 @@ const App: React.FC = () => {
   const classes = useStyles();
   const [darkState, setDarkState] = useState(false);
   const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
-  const [pingResponse, setPingResponse] = useState('');
   const [carbonUsageResults, setCarbonUsageResults] = useState<(CarbonElectricityResult)[]>([]);
   const thememode: PaletteType = darkState ? 'dark' : 'light';
 
   useEffect(() => {
     pingCarbonInterface()
       .then(response => response.json())
-      .then((data) => {
-        setPingResponse(data.message);
-      }).catch((reason) => {
+      .catch((reason) => {
         console.log(reason);
         setShowErrorSnackbar(true);
       });

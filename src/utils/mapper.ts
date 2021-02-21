@@ -1,7 +1,7 @@
 import { CarbonElectricityResult } from '../types/domainTypes';
 import { CarbonResultResponse } from '../types/responseTypes';
 
-export const mapToCarbonElectricityResult = (response: CarbonResultResponse, date: Date) => {
+export const mapToCarbonElectricityResult = (response: CarbonResultResponse, date: Date): CarbonElectricityResult => {
   const options = { weekday: 'short', year: '2-digit', month: 'short', day: 'numeric' };
   return {
     date_string: date.toLocaleDateString('en-UK', options),
